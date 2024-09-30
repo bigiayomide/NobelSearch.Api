@@ -1,0 +1,27 @@
+﻿version: '3.9'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  webapp:
+    build:
+      context: .
+      dockerfile: NobelSearch.Api/Dockerfile
+    container_name: nobelprize_webapp
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+    environment:
+      - DatabaseSettings__ConnectionString=mongodb://mongo:27017
+      - DatabaseSettings__DatabaseName=nobel_prize_db
+    restart: always
+
+volumes:
+  mongo-data:
